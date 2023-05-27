@@ -10,9 +10,24 @@ import {
 import { collection, addDoc, doc, setDoc, getFirestore, getDocs, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import firebaseApp from "../services/firebase";
 
-const UserContext = createContext({})
+// const UserContext = createContext({})
 
-const UserProvider = ({ children }) => {
+interface Data {
+    couldLogin: any
+    signIn: any
+    signOut: any
+    user: any
+    loading: any
+    signUp: any
+    xp: any
+    getXP: any
+    updateXp: any
+    decreaseXp: any
+}
+
+const UserContext = createContext<Data>({} as Data);
+
+const UserProvider = ({children}) => {
 
     const db = getFirestore(firebaseApp);
     const auth = getAuth();
@@ -32,8 +47,6 @@ const UserProvider = ({ children }) => {
         setLoading(false)
     }
 
-
-
     const signIn = (email: string, password: string) => {
         console.log('xxx', email, password)
         setLoading(true)
@@ -48,7 +61,6 @@ const UserProvider = ({ children }) => {
     }
 
     const signOut = () => {
-        console.log('sai!!!')
         setLoading(true)
 
         signOutFirebase(auth)
@@ -65,9 +77,11 @@ const UserProvider = ({ children }) => {
         setLoading(true);
 
         createUserWithEmailAndPassword(auth, email, password).then( async (userCredential) => {
-            console.log("Criou");
+            setUserUid(userCredential.user.uid);
             const ref = doc(db, "UserInformation", userCredential.user.uid);
-            await setDoc(ref, { xp: 0 });
+            await setDoc(ref, { xp: 0 })
+            await getXP();
+            setLoading(false);
             }).catch((error) => {
                 console.log('error', error)
                 setLoading(false)
@@ -81,7 +95,6 @@ const UserProvider = ({ children }) => {
         const a = await getDoc(ref);
         setXp(a.data().xp);
         setLoading(false);
-        // console.log(xp);
     }
 
     const updateXp =  async() => {

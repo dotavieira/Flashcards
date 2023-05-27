@@ -3,6 +3,7 @@ import Card from "../../components/Card";
 import Xp from "../../components/Xp";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../context/user";
+import { Link } from "react-router-dom";
 
 const Game = () => {
   const { getXP, xp } = useContext(UserContext);
@@ -42,6 +43,7 @@ const Game = () => {
           ))}
         </div>
       )}
+      <Link to="/dashboard">Voltar ao Dashboard!</Link>
     </>
   );
 };
